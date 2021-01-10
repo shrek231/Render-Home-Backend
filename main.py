@@ -16,6 +16,13 @@ def root():
 def get_blend_file():
   return send_from_directory(ROOT_DIRECTORY,"render.blend")
 
+
+@app.route("/Render.zip", methods=['GET']) # serve blend file
+def get_rendered_files():
+  os.system("rm images.zip")
+  os.system("zip -r images.zip Images/")
+  return send_from_directory(ROOT_DIRECTORY,"images.zip")
+
 @app.route('/sendBlend', methods=['POST']) # get blend file from master
 def recieve_blend_file():
   global framestorender
@@ -28,7 +35,7 @@ def recieve_blend_file():
 @app.route('/sendFrame', methods=['POST']) # get frame from client
 def recieve_frame():
   for image in request.files:
-    request.files[image].save(ROOT_DIRECTORY+image+".png")
+    request.files[image].save(ROOT_DIRECTORY+"Images/"+image+".png")
   return "OK"
 
 @app.route('/requestFrame', methods=['GET']) # sind a frame to a client
