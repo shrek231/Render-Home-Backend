@@ -14,7 +14,7 @@ ROOT_DIRECTORY = "/home/runner/BlenderRenderServer/"
 def root():
   global unrenderedframes
   global totalframes
-  return f"<h1>Blender Render Server V1.0</h1>" +  str(int((unrenderedframes-totalframes)/totalframes * -100)) + "% complete"
+  return f"<h1>Blender Render Server</h1>" +  str(int((unrenderedframes-totalframes)/totalframes * -100)) + "% complete"
 
 @app.route("/getBlend", methods=['GET']) # serve blend file
 def get_blend_file():
@@ -75,8 +75,11 @@ def render_status():
 @app.route('/cancelFrame', methods=['POST']) # add a frame back into the frames to render
 def cancel_render():
   global framestorender
-  framestorender.append(int(request.json["frame"]))
+  if int(request.json["frame"]) not in framestorender:
+    framestorender.append(int(request.json["frame"]))
   return "OK"
+  #else:
+  #  return "Already going to render this frame"
 
 
 app.run(host='0.0.0.0', port=8080)
