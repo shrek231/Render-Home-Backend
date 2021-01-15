@@ -4,19 +4,23 @@ from flask import request, jsonify, send_from_directory
 app = flask.Flask(__name__)
 app.config["DEBUG"] = False
 
+
 framestorender = []
 unrenderedframes = 0
 totalframes = 1
 
 ROOT_DIRECTORY = "/home/runner/BlenderRenderServer/"
 
-
 @app.route('/', methods=['GET'])  # root page
 def root():
     global unrenderedframes
     global totalframes
-    return f"<h1>Blender Render Server</h1>" + str(int((unrenderedframes - totalframes) / totalframes *-100)) + "% complete"
+    return f"<head><link rel=\"stylesheet\" href=\"style/s.css\"></head><center><h1>Blender Render Server</h1>" + str(int((unrenderedframes - totalframes) / totalframes *-100)) + "% complete</center><br><small><a href=\"https://github.com/shrek231/Render-Home\">Github</a></small>"
 
+
+@app.route("/style/<path:path>", methods=['GET'])  # serve blend file
+def get_files(path):
+    return send_from_directory(ROOT_DIRECTORY,  "style/" + path)
 
 @app.route("/getBlend", methods=['GET'])  # serve blend file
 def get_blend_file():
@@ -46,6 +50,11 @@ def recieve_blend_file():
     global framestorender
     global unrenderedframes
     global totalframes
+    try:
+      if request.form["Password"] != os.getenv("password"):
+        return "Incorrect password"
+    except:
+      return "Password error"
     for file in request.files:
         framerange = file.split("-")
         framestorender = list(
