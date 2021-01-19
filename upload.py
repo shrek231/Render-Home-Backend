@@ -7,21 +7,17 @@ server_url = "http://blenderrenderserver.youtubeadminist.repl.co"
 
 WaitForRender = False
 
-Password = "passW" # server password
+Password = "passW"
 
+Version = bpy.app.version_string
 bpy.ops.wm.save_as_mainfile(filepath=bpy.data.filepath)
-
 scene = bpy.context.scene
 blendpath = (bpy.data.filepath)
 framerange = str(scene.frame_start) + "-" + str(scene.frame_end)
 
-
-
 if requests.get(f"{server_url}/status").json() == 0:
-    os.system(f'curl -F "Password"={Password} -F {framerange}=@{blendpath} {server_url}/sendBlend')
+    os.system(f'curl -F "Password"={Password} -F "Version"={Version} -F {framerange}=@{blendpath} {server_url}/sendBlend')
     print() # add newline after curl prints "OK"
-
-
     if WaitForRender:
         while True:
             frame = requests.get(f"{server_url}/status").json()
