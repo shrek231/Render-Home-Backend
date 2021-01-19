@@ -8,6 +8,8 @@ app.config["DEBUG"] = False
 framestorender = []
 unrenderedframes = 0
 totalframes = 1
+Version = None
+
 
 ROOT_DIRECTORY = "/home/runner/BlenderRenderServer/"
 
@@ -50,6 +52,7 @@ def recieve_blend_file():
     global framestorender
     global unrenderedframes
     global totalframes
+    global Version
     try:
       if request.form["Password"] != os.getenv("password"):
         return "Incorrect password"
@@ -64,6 +67,7 @@ def recieve_blend_file():
         totalframes = len(framestorender)
         request.files[file].save(ROOT_DIRECTORY + "render.blend")
     os.system("rm Images/*")
+    Version = request.form["Version"]
     return "OK"
 
 
@@ -77,7 +81,7 @@ def recieve_frame():
     return "OK"
 
 
-@app.route('/requestFrame', methods=['GET'])  # sind a frame to a client
+@app.route('/requestFrame', methods=['GET'])  # send a frame to a client
 def distrubite_frame():
     if len(framestorender) > 0:
         responce = framestorender[0]
@@ -87,10 +91,15 @@ def distrubite_frame():
         return jsonify(-1)
 
 
-@app.route('/status', methods=['GET'])  # sind a frame to a client
+@app.route('/status', methods=['GET'])  # send a frame to a client
 def render_status():
     return jsonify(unrenderedframes)
 
+
+@app.route('/version', methods=['GET'])  # send a frame to a client
+def blender_version():
+    global Version
+    return jsonify(Version)
 
 @app.route('/cancelFrame',methods=['POST'])  # add a frame back into the frames to render
 def cancel_render():
