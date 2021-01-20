@@ -1,6 +1,6 @@
 import flask
 import os
-from flask import request, jsonify, send_from_directory
+from flask import request, jsonify, send_from_directory, render_template
 app = flask.Flask(__name__)
 app.config["DEBUG"] = False
 
@@ -17,7 +17,7 @@ ROOT_DIRECTORY = "/home/runner/BlenderRenderServer/"
 def root():
     global unrenderedframes
     global totalframes
-    return f"<head><link rel=\"stylesheet\" href=\"style/s.css\"></head><center><h1>Blender Render Server</h1>" + str(int((unrenderedframes - totalframes) / totalframes *-100)) + "% complete</center><br><small><a href=\"https://github.com/shrek231/Render-Home\">Github</a></small>"
+    return render_template('index.html', percent=str(int((unrenderedframes - totalframes) / totalframes *-100)))
 
 
 @app.route("/style/<path:path>", methods=['GET'])  # serve blend file
@@ -108,4 +108,6 @@ def cancel_render():
         framestorender.append(int(request.json["frame"]))
     return "OK"
 
-app.run(host='0.0.0.0', port=8080)
+if __name__ == "__main__":
+    from waitress import serve
+    serve(app, host='0.0.0.0', port=8080)
