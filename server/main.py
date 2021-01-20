@@ -19,11 +19,6 @@ def root():
     global totalframes
     return render_template('index.html', percent=str(int((unrenderedframes - totalframes) / totalframes *-100)))
 
-
-@app.route("/style/<path:path>", methods=['GET'])  # serve blend file
-def get_files(path):
-    return send_from_directory(ROOT_DIRECTORY,  "style/" + path)
-
 @app.route("/getBlend", methods=['GET'])  # serve blend file
 def get_blend_file():
     return send_from_directory(ROOT_DIRECTORY, "render.blend")
