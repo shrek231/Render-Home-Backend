@@ -18,7 +18,6 @@ def root():
     global unrenderedframes
     global totalframes
     return render_template('index.html', percent=str(int((unrenderedframes - totalframes) / totalframes *-100)))
-    #return f"<head><link rel=\"stylesheet\" href=\"style/s.css\"></head><center><h1>Blender Render Server</h1>" + str(int((unrenderedframes - totalframes) / totalframes *-100)) + "% complete</center><br><small><a href=\"https://github.com/shrek231/Render-Home\">Github</a></small>"
 
 
 @app.route("/style/<path:path>", methods=['GET'])  # serve blend file
