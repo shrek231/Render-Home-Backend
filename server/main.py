@@ -4,12 +4,10 @@ from flask import request, jsonify, send_from_directory, render_template
 app = flask.Flask(__name__)
 app.config["DEBUG"] = False
 
-
 framestorender = []
 unrenderedframes = 0
 totalframes = 1
 Version = None
-
 
 ROOT_DIRECTORY = "/home/runner/BlenderRenderServer/"
 
@@ -23,8 +21,7 @@ def root():
 def get_blend_file():
     return send_from_directory(ROOT_DIRECTORY, "render.blend")
 
-
-@app.route("/cancel", methods=['GET'])  # serve blend file
+@app.route("/cancel", methods=['GET'])  # cancel all frames
 def cancel_renders():
     global framestorender
     global unrenderedframes
@@ -35,7 +32,7 @@ def cancel_renders():
     return "OK"
 
 
-@app.route("/Render.zip", methods=['GET'])  # serve blend file
+@app.route("/Render.zip", methods=['GET'])  # serve rendered images
 def get_rendered_files():
     os.system("rm images.zip")
     os.system("zip -r images.zip Images/")
@@ -75,7 +72,6 @@ def recieve_frame():
         unrenderedframes = unrenderedframes - 1
     return "OK"
 
-
 @app.route('/requestFrame', methods=['GET'])  # send a frame to a client
 def distrubite_frame():
     if len(framestorender) > 0:
@@ -85,11 +81,9 @@ def distrubite_frame():
     else:
         return jsonify(-1)
 
-
 @app.route('/status', methods=['GET'])  # send a frame to a client
 def render_status():
     return jsonify(unrenderedframes)
-
 
 @app.route('/version', methods=['GET'])  # send a frame to a client
 def blender_version():
